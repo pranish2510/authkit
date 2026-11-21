@@ -1,0 +1,10 @@
+const express = require("express");
+const { resolveApplication } = require("../middleware/application.middleware");
+const validate = require("../middleware/validate.middleware");
+const { registerValidation, loginValidation } = require("../middleware/auth.validation");
+const { register, login } = require("../controllers/auth.controller");
+const router = express.Router();
+router.use(resolveApplication);
+router.post("/register", registerValidation, validate, register);
+router.post("/login", loginValidation, validate, login);
+module.exports = router;

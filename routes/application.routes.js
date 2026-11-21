@@ -1,0 +1,15 @@
+const express = require("express");
+const { body, param } = require("express-validator");
+const validate = require("../middleware/validate.middleware");
+const { protect, authorize } = require("../middleware/auth.middleware");
+const c = require("../controllers/application.controller");
+const router = express.Router();
+router.use(protect, authorize("user", "developer", "admin", "superadmin"));
+router.post("/", body("name").trim().isLength({ min: 2, max: 100 }), validate, c.createApplication);
+router.get("/", c.listApplications);
+router.get("/:id", param("id").isMongoId(), validate, c.getApplication);
+router.patch("/:id", param("id").isMongoId(), validate, c.updateApplication);
+router.get("/:id/api-keys", param("id").isMongoId(), validate, c.listApiKeys);
+router.post("/:id/api-keys", param("id").isMongoId(), body("label").optional().trim().isLength({ min: 1, max: 80 }), validate, c.createApiKey);
+router.delete("/:id/api-keys/:keyId", param("id").isMongoId(), param("keyId").isMongoId(), validate, c.revokeApiKey);
+module.exports = router;

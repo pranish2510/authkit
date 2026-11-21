@@ -1,0 +1,12 @@
+const express = require("express");
+const { body, param } = require("express-validator");
+const { protect, authorize } = require("../middleware/auth.middleware");
+const validate = require("../middleware/validate.middleware");
+const c = require("../controllers/admin.controller");
+const router = express.Router();
+router.use(protect, authorize("admin", "superadmin"));
+router.get("/overview", c.overview);
+router.get("/users", c.listUsers);
+router.patch("/users/:id/status", param("id").isMongoId(), body("status").isIn(["active", "disabled"]), validate, c.setUserStatus);
+router.get("/audit-logs", c.auditLogs);
+module.exports = router;
